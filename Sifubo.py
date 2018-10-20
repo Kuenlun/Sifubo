@@ -1,8 +1,10 @@
 ##########################################
 #                                        #
-#  SImplificador de FUnciones BOoleanas  #
+#  Simplificador de Funciones Booleanas  #
 #                                        #
 ##########################################
+
+
 class Digital():
     def __init__(self, value):
         if value == '0':
@@ -217,19 +219,21 @@ class DigitalFunction():
         order = self.evaluable
         for i, operation in enumerate(order):
             # Check if expression is negated
-            if operation[0] == '!': negate = True
-            else:                   negate = False
-            if negate: expression = operation[1:]
-            else:      expression = operation
+            if operation[0] == '!':
+                negate = True
+            else:
+                negate = False
+            if negate:
+                expression = operation[1:]
+            else:
+                expression = operation
             # Check wich kind of operation is if it is an operation
             sum = False
-            pro = False
             aux = True
             if '+' in expression:
                 sum = True
                 a, b = expression.split('+')
             elif '*' in expression:
-                pro = True
                 a, b = expression.split('*')
             else:
                 aux = False
@@ -252,8 +256,10 @@ class DigitalFunction():
                 a = Digital(a)
                 b = Digital(b)
                 # Operate
-                if sum: result = a + b
-                else:   result = a * b
+                if sum:
+                    result = a + b
+                else:
+                    result = a * b
             # Negate if necesary
             if negate:
                 result.negate()
@@ -378,56 +384,67 @@ class DigitalFunction():
     @staticmethod
     def syntax_check(str_input):
         '''Checks the syntax of a Digital function'''
-        ## Assert input isn't empty
+        # Assert input isn't empty
         if not str_input:
             raise SyntaxError('Input must contain something')
 
-        ## Assert that the input doen't have invalid characters
+        # Assert that the input doen't have invalid characters
         for char in str_input:
             if char not in DigitalFunction.allowed:
                 raise SyntaxError(f'"{char}" is not a valid character')
 
-        ## Assert all brackets and negations are coupled
+        # Assert all brackets and negations are coupled
         c_br = 0
         c_ng = 0
         for char in str_input:
-            if   char == '(': c_br += 1
-            elif char == '<': c_ng += 1
-            elif char == ')': c_br -= 1
-            elif char == '>': c_ng -= 1
+            if char == '(':
+                c_br += 1
+            elif char == '<':
+                c_ng += 1
+            elif char == ')':
+                c_br -= 1
+            elif char == '>':
+                c_ng -= 1
             # More brackets closed than opened
-            if c_br < 0: raise SyntaxError('Incorrect bracket syntax')
+            if c_br < 0:
+                raise SyntaxError('Incorrect bracket syntax')
             # More negations closed than opened
-            if c_ng < 0: raise SyntaxError('Incorrect negation syntax')
-        if c_br != 0:    raise SyntaxError('Missing closing bracket')
-        if c_ng != 0:    raise SyntaxError('Missing closing negation')
+            if c_ng < 0:
+                raise SyntaxError('Incorrect negation syntax')
+        if c_br != 0:
+            raise SyntaxError('Missing closing bracket')
+        if c_ng != 0:
+            raise SyntaxError('Missing closing negation')
 
-        ## To not allow inputs like this: (<(>))
+        # To not allow inputs like this: (<(>))
         DigitalFunction.brng_syntax(str_input)
 
-        ## Assert no empty brackets
-        if '()' in str_input: raise SyntaxError('Empty brackets')
+        # Assert no empty brackets
+        if '()' in str_input:
+            raise SyntaxError('Empty brackets')
 
-        ## Assert no empty negations
-        if '<>' in str_input: raise SyntaxError('Empty negation')
+        # Assert no empty negations
+        if '<>' in str_input:
+            raise SyntaxError('Empty negation')
 
-        ## Assert there aren't operators together
+        # Assert there aren't operators together
         flag = False
         for i, char in enumerate(str_input):
             if char == '*' or char == '+':
-                if flag: raise SyntaxError('Two opetator together')
+                if flag:
+                    raise SyntaxError('Two opetator together')
                 flag = True
             else:
                 flag = False
 
-        ## Assert beginning and ending don't start/finish with operator
+        # Assert beginning and ending don't start/finish with operator
         if len(str_input) > 0:
             if str_input[0] == '+' or str_input[0] == '*':
                 raise SyntaxError(f"Input can't start with an operator")
             if str_input[-1] == '+' or str_input[-1] == '*':
                 raise SyntaxError(f"Input can't finish with an operator")
 
-        ## Assert there aren't invalid operations
+        # Assert there aren't invalid operations
         invalid_operations = ('(+', '(*', '+)', '*)', '<+', '<*', '+>', '*>')
         for operation in invalid_operations:
             if operation in str_input:
@@ -454,7 +471,7 @@ class DigitalFunction():
                     if c_br == 0:
                         if '<' in f[prev_br+1:i] or '>' in f[prev_br+1:i]:
                             # Calls brng again with inner info
-                            brng_syntax(f[prev_br+1:i])
+                            DigitalFunction.brng_syntax(f[prev_br+1:i])
                             # Erases inner info
                             f = f[:prev_br] + f[i+1:]
                         else:
@@ -466,7 +483,7 @@ class DigitalFunction():
                     if c_ng == 0:
                         if '(' in f[prev_ng+1:i] or ')' in f[prev_ng+1:i]:
                             # Calls brng again with inner info
-                            brng_syntax(f[prev_ng+1:i])
+                            DigitalFunction.brng_syntax(f[prev_ng+1:i])
                             # Erases inner info
                             f = f[:prev_ng] + f[i+1:]
                         else:
@@ -488,8 +505,10 @@ class DigitalFunction():
         for i in range(len(str_input)-1):
             # Check str_input in chunks of 2 chars
             chunk = list(str_input[i:i+2])
-            if chunk[0] in DigitalFunction.alphabet: chunk[0] = 'v'
-            if chunk[1] in DigitalFunction.alphabet: chunk[1] = 'v'
+            if chunk[0] in DigitalFunction.alphabet:
+                chunk[0] = 'v'
+            if chunk[1] in DigitalFunction.alphabet:
+                chunk[1] = 'v'
             chunk_str = str().join(chunk)
             if chunk_str in gaps:
                 filled_input.insert(i+1+c, '*')
